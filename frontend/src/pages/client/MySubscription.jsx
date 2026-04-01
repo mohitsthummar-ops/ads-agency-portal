@@ -29,12 +29,20 @@ export default function MySubscription() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [subRes, pkgRes] = await Promise.all([
+            const [subRes, pkgRes] = await Promise.allSettled([
                 subscriptionAPI.getMy(),
                 subscriptionAPI.getPackages()
             ]);
-            setSubscription(subRes.data.subscription);
-            setPackages(pkgRes.data.packages || []);
+
+            if (pkgRes.status === 'fulfilled') {
+                setPackages(pkgRes.value.data.packages || []);
+            } else {
+                toast.error('Failed to load subscription packages');
+            }
+
+            if (subRes.status === 'fulfilled') {
+                setSubscription(subRes.value.data.subscription);
+            }
         } catch {
             toast.error('Failed to load subscription data');
         } finally {
