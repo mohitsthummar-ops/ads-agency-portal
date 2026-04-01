@@ -122,11 +122,21 @@ if (!fs.existsSync(uploadDir)) {
 }
 app.use('/uploads', express.static(uploadDir));
 
+// Dynamic Client URL helper for absolute reliability
+const getClientUrl = () => {
+    if (process.env.CLIENT_URL) return process.env.CLIENT_URL.split(',')[0];
+    if (process.env.FRONTEND_URL) return process.env.FRONTEND_URL.split(',')[0];
+    return process.env.NODE_ENV === 'production' ? 'https://ads-agency-portal.vercel.app' : 'http://localhost:3000';
+};
+
 // Root Auth Routes
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 app.get(
     '/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=auth_failed`, session: false }),
+    passport.authenticate('google', {
+        failureRedirect: `${getClientUrl()}/login?error=auth_failed`,
+        session: false
+    }),
     (req, res) => {
         // Issue a JWT so frontend can use it directly (avoids cross-origin session cookie issue)
         const token = req.user.getSignedJwtToken();
@@ -137,7 +147,7 @@ app.get(
             role: req.user.role,
             avatar: req.user.avatar,
         }));
-        res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/auth/callback?token=${token}&user=${user}`);
+        res.redirect(`${getClientUrl()}/auth/callback?token=${token}&user=${user}`);
     }
 );
 
