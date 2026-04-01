@@ -15,13 +15,9 @@ const sendToken = (user, statusCode, res) => {
             Date.now() + (process.env.JWT_COOKIE_EXPIRE || 7) * 24 * 60 * 60 * 1000
         ),
         httpOnly: true,
-        sameSite: 'Lax',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     };
-
-    if (process.env.NODE_ENV === 'production') {
-        cookieOptions.secure = true;
-        cookieOptions.sameSite = 'Strict';
-    }
 
     res.status(statusCode)
         .cookie('token', token, cookieOptions)
