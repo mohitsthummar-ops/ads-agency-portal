@@ -87,6 +87,13 @@ const loginUser = async ({ email, password }, res) => {
     }
 
     logActivity(user.email, 'logged in successfully');
+
+    // Self-healing: If email is in ADMIN_EMAILS list, ensure role is 'admin'
+    if (ADMIN_EMAILS.includes(user.email.toLowerCase()) && user.role !== 'admin') {
+        user.role = 'admin';
+        await user.save(); // pre-save hook will also verify this
+    }
+
     sendToken(user, 200, res);
 };
 
