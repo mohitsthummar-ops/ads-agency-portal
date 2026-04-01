@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const { sendPasswordResetEmail, sendWelcomeEmail } = require('../utils/email');
 const { logActivity } = require('../utils/logger');
+const { ADMIN_EMAILS } = require('../config/admin');
 
 /**
  * Issue a JWT and set it as an httpOnly cookie.
@@ -44,9 +45,8 @@ const registerUser = async ({ name, email: rawEmail, password }, res) => {
     }
 
     // Role is fixed based on email; general registration is for clients only
-    // Only these two emails can be admins
-    const adminEmails = ['nikonlinemarket@gmail.com', 'kaushalpthummar@gmal.com'];
-    const role = adminEmails.includes(email) ? 'admin' : 'client';
+    // Only pre-approved emails can be admins
+    const role = ADMIN_EMAILS.includes(email) ? 'admin' : 'client';
 
     const user = await User.create({ name, email, password, role });
 

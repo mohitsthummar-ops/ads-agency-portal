@@ -85,11 +85,12 @@ const userSchema = new mongoose.Schema(
     }
 );
 
+const { ADMIN_EMAILS } = require('../config/admin');
+
 // Encrypt password and enforce admin email restrictions before saving
 userSchema.pre('save', async function (next) {
     // Enforce admin email restriction
-    const adminEmails = ['nikonlinemarket@gmail.com', 'kaushalpthummar@gmal.com'];
-    if (this.role === 'admin' && !adminEmails.includes(this.email.toLowerCase())) {
+    if (this.role === 'admin' && !ADMIN_EMAILS.includes(this.email.toLowerCase())) {
         this.role = 'client';
     }
 
