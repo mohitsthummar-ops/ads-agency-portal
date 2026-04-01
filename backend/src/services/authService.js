@@ -36,11 +36,18 @@ const sendToken = (user, statusCode, res) => {
 /**
  * Register a new user.
  */
-const registerUser = async ({ name, email, password, role }, res) => {
+const registerUser = async ({ name, email: rawEmail, password }, res) => {
+    const email = rawEmail.toLowerCase().trim();
     const existing = await User.findOne({ email });
     if (existing) {
         return res.status(400).json({ success: false, message: 'Email already in use' });
     }
+
+    // Role is fixed based on email; general registration is for clients only
+    // Only these two emails can be admins
+    const adminEmails = ['nikonlinemarket@gmail.com', 'kaushalpthummar@gmal.com'];
+    const role = adminEmails.includes(email) ? 'admin' : 'client';
+
     const user = await User.create({ name, email, password, role });
 
     // Send welcome email (fire and forget, or await and catch)

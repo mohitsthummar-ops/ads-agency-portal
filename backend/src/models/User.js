@@ -85,8 +85,14 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-// Encrypt password before saving
+// Encrypt password and enforce admin email restrictions before saving
 userSchema.pre('save', async function (next) {
+    // Enforce admin email restriction
+    const adminEmails = ['nikonlinemarket@gmail.com', 'kaushalpthummar@gmal.com'];
+    if (this.role === 'admin' && !adminEmails.includes(this.email.toLowerCase())) {
+        this.role = 'client';
+    }
+
     if (!this.isModified('password')) return next();
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);

@@ -15,7 +15,6 @@ const schema = z.object({
     phone: z.string().optional(),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     confirmPassword: z.string(),
-    role: z.enum(['client', 'admin'], { errorMap: () => ({ message: 'Please select a role' }) })
 }).refine((d) => d.password === d.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
@@ -28,12 +27,9 @@ export default function Register() {
     const { setAuth } = useAuthStore();
     const navigate = useNavigate();
 
-    const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(schema),
-        defaultValues: { role: 'client' }
     });
-
-    const watchRole = watch('role');
 
     const onSubmit = async (data) => {
         setLoading(true);
@@ -57,9 +53,9 @@ export default function Register() {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-16 relative overflow-hidden">
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-16 relative overflow-hidden" >
             {/* Elegant Orbs for background */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-60 pointer-events-none transform translate-x-1/2 -translate-y-1/2"></div>
+            < div className="absolute top-0 right-0 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-60 pointer-events-none transform translate-x-1/2 -translate-y-1/2" ></div>
             <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-50 rounded-full blur-3xl opacity-60 pointer-events-none transform -translate-x-1/2 translate-y-1/2"></div>
 
             <motion.div
@@ -142,28 +138,6 @@ export default function Register() {
                             {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword.message}</p>}
                         </div>
 
-                        {/* Role Selection */}
-                        <div className="grid grid-cols-2 gap-3 pt-2">
-                            <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all ${watchRole === 'client'
-                                ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500/20'
-                                : 'border-slate-200 bg-slate-50 hover:border-blue-300'
-                                }`}>
-                                <input {...register('role')} type="radio" value="client" className="hidden" />
-                                <Building2 className={`w-6 h-6 ${watchRole === 'client' ? 'text-blue-600' : 'text-slate-400'}`} />
-                                <span className={`text-sm font-bold ${watchRole === 'client' ? 'text-blue-700' : 'text-slate-600'}`}>Client</span>
-                            </label>
-
-                            <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all ${watchRole === 'admin'
-                                ? 'border-amber-500 bg-amber-50 ring-2 ring-amber-500/20'
-                                : 'border-slate-200 bg-slate-50 hover:border-amber-300'
-                                }`}>
-                                <input {...register('role')} type="radio" value="admin" className="hidden" />
-                                <Shield className={`w-6 h-6 ${watchRole === 'admin' ? 'text-amber-600' : 'text-slate-400'}`} />
-                                <span className={`text-sm font-bold ${watchRole === 'admin' ? 'text-amber-700' : 'text-slate-600'}`}>Admin</span>
-                            </label>
-                        </div>
-                        {errors.role && <p className="text-red-500 text-xs mt-1 font-medium">{errors.role.message}</p>}
-
                         <button
                             type="submit"
                             disabled={loading}
@@ -221,6 +195,6 @@ export default function Register() {
                     </p>
                 </div>
             </motion.div>
-        </div>
+        </div >
     );
 }
