@@ -58,13 +58,22 @@ async function seed() {
     //  2. USERS (Admin and Client)
     // ═══════════════════════════════════════════════════════════
     const adminUser = await User.create({
-        name: 'Admin User',
-        email: 'admin@gmail.com',
+        name: 'Nikon Admin',
+        email: 'nikonlinemarket@gmail.com',
         password: 'admin123',
         role: 'admin',
         isEmailVerified: true,
     });
-    console.log('✅ Admin user created (admin@gmail.com / admin123)');
+    console.log('✅ Admin user created (nikonlinemarket@gmail.com / admin123)');
+
+    const adminUser2 = await User.create({
+        name: 'Kaushal Admin',
+        email: 'kaushalpthummar@gmal.com',
+        password: 'admin123',
+        role: 'admin',
+        isEmailVerified: true,
+    });
+    console.log('✅ Admin user created (kaushalpthummar@gmal.com / admin123)');
 
     const userMohit = await User.create({
         name: 'Mohit Thummar',
@@ -97,16 +106,30 @@ async function seed() {
             duration: 7
         },
         {
-            name: 'Pro',
-            price: 99,
-            adLimit: 50,
-            imageGenerationLimit: 100,
+            name: '1 Month',
+            price: 299,
+            adLimit: 100,
+            imageGenerationLimit: 250,
             duration: 30
+        },
+        {
+            name: '6 Months',
+            price: 999,
+            adLimit: 1000,
+            imageGenerationLimit: 2000,
+            duration: 180
+        },
+        {
+            name: '1 Year',
+            price: 1999,
+            adLimit: 2000,
+            imageGenerationLimit: 5000,
+            duration: 365
         }
     ]);
     const plans = await SubscriptionPlan.find();
     const demoPlan = plans.find(p => p.name === 'Demo');
-    const proPlan = plans.find(p => p.name === 'Pro');
+    const oneMonthPlan = plans.find(p => p.name === '1 Month');
 
     // Sub for mohitsthummar (Active Demo Plan)
     await UserSubscription.create({
@@ -121,7 +144,7 @@ async function seed() {
     // Sub for client (Active Pro Plan)
     await UserSubscription.create({
         user: clientUser._id,
-        plan: proPlan._id,
+        plan: oneMonthPlan._id,
         startDate: new Date(),
         expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         usage: { adsCreated: 5, imagesGenerated: 12 },
