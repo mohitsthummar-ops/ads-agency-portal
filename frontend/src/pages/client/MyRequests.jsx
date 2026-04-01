@@ -15,7 +15,7 @@ const STATUS_CONFIG = {
     rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700', icon: XCircle },
 };
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://ads-agency-api.onrender.com' : 'http://localhost:5000');
 
 // Helper to get full image URL to bypass proxy issues for direct <img src> tags
 const getFullImageUrl = (url) => {
