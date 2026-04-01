@@ -25,7 +25,9 @@ const formatSubscription = (sub) => {
 const getPackages = async () => {
     let plans = await SubscriptionPlan.find();
 
-    if (plans.length === 0) {
+    // Enforce exactly 4 plans
+    if (plans.length !== 4) {
+        await SubscriptionPlan.deleteMany({});
         plans = await SubscriptionPlan.create([
             {
                 name: 'Demo',
@@ -35,15 +37,8 @@ const getPackages = async () => {
                 duration: 7
             },
             {
-                name: 'Pro',
-                price: 99,
-                adLimit: 50,
-                imageGenerationLimit: 100,
-                duration: 30
-            },
-            {
                 name: '1 Month',
-                price: 199,
+                price: 299,
                 adLimit: 100,
                 imageGenerationLimit: 250,
                 duration: 30
