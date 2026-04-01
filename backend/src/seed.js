@@ -60,7 +60,7 @@ async function seed() {
     const adminUser = await User.create({
         name: 'Nikon Admin',
         email: 'nikonlinemarket@gmail.com',
-        password: 'admin123',
+        password: 'admin 123',
         role: 'admin',
         isEmailVerified: true,
     });
@@ -68,8 +68,8 @@ async function seed() {
 
     const adminUser2 = await User.create({
         name: 'Kaushal Admin',
-        email: 'kaushalpthummar@gmal.com',
-        password: 'admin123',
+        email: 'kaushalpthummar@gmail.com',
+        password: 'admin 123',
         role: 'admin',
         isEmailVerified: true,
     });

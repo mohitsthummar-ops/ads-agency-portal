@@ -4,7 +4,7 @@
  */
 const ADMIN_EMAILS = [
     'nikonlinemarket@gmail.com',
-    'kaushalpthummar@gmal.com'
+    'kaushalpthummar@gmail.com'
 ];
 
 module.exports = {
