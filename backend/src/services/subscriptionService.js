@@ -20,9 +20,51 @@ const formatSubscription = (sub) => {
 
 /**
  * Get all available subscription packages.
+ * Auto-seeds default plans if the database is empty.
  */
 const getPackages = async () => {
-    const plans = await SubscriptionPlan.find();
+    let plans = await SubscriptionPlan.find();
+
+    if (plans.length === 0) {
+        plans = await SubscriptionPlan.create([
+            {
+                name: 'Demo',
+                price: 0,
+                adLimit: 5,
+                imageGenerationLimit: 10,
+                duration: 7
+            },
+            {
+                name: 'Pro',
+                price: 99,
+                adLimit: 50,
+                imageGenerationLimit: 100,
+                duration: 30
+            },
+            {
+                name: '1 Month',
+                price: 199,
+                adLimit: 100,
+                imageGenerationLimit: 250,
+                duration: 30
+            },
+            {
+                name: '6 Months',
+                price: 999,
+                adLimit: 1000,
+                imageGenerationLimit: 2000,
+                duration: 180
+            },
+            {
+                name: '1 Year',
+                price: 1999,
+                adLimit: 2000,
+                imageGenerationLimit: 5000,
+                duration: 365
+            }
+        ]);
+    }
+
     return plans.map(p => ({
         id: p._id,
         label: p.name,
