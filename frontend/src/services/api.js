@@ -1,8 +1,14 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+// In production, points to the live Render backend (set VITE_BACKEND_URL in Vercel env vars)
+// In development, falls back to empty string so Vite proxy (/api) handles requests
+export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
 const api = axios.create({
-    baseURL: '/api',
+    // Dev: baseURL = '/api' → hits Vite proxy → localhost:5000
+    // Prod: baseURL = 'https://your-backend.onrender.com/api'
+    baseURL: import.meta.env.PROD ? `${BACKEND_URL}/api` : '/api',
     headers: { 'Content-Type': 'application/json' },
     withCredentials: true,
 });

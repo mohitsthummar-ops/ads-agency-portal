@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock, Zap, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { authAPI } from '../../services/api';
+import { authAPI, BACKEND_URL } from '../../services/api';
 import useAuthStore from '../../store/authStore';
 
 const schema = z.object({
@@ -127,7 +127,7 @@ export default function Login() {
 
                         <button
                             type="button"
-                            onClick={() => window.location.href = 'http://localhost:5000/auth/google'}
+                            onClick={() => window.location.href = `${BACKEND_URL}/auth/google`}
                             className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
                         >
                             <svg className="w-5 h-5" viewBox="0 0 24 24">
