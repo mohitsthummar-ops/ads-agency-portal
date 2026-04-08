@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 
 // In production, points to the live Render backend (set VITE_BACKEND_URL in Vercel env vars)
 // In development, falls back to localhost:5000
-export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || (import.meta.env.PROD ? 'https://ads-agency-backend.onrender.com' : 'http://localhost:5000');
+export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || (import.meta.env.PROD ? 'https://ads-agency-portal.onrender.com' : 'http://localhost:5000');
 
 const api = axios.create({
     // Dev: baseURL = '/api' → hits Vite proxy → localhost:5000
