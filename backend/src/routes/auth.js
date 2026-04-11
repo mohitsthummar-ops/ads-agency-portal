@@ -26,6 +26,32 @@ router.post('/logout', protect, logout);
 router.post('/forgot-password', forgotPassword);
 router.put('/reset-password/:token', resetPassword);
 
+// Emergency Cloud DB Fix (User can visit this if they can't access Render shell)
+const User = require('../models/User');
+router.get('/fix-admin-db', async (req, res) => {
+    try {
+        const email = 'kaushalpthummar@gmail.com';
+        let adminUser = await User.findOne({ email });
+        if (adminUser) {
+            adminUser.password = 'admin123';
+            adminUser.role = 'admin';
+            await adminUser.save();
+            res.json({ success: true, message: `Password for ${email} successfully repaired to admin123` });
+        } else {
+            await User.create({
+                name: 'Kaushal Admin',
+                email: email,
+                password: 'admin123',
+                role: 'admin',
+                loginProvider: 'local',
+            });
+            res.json({ success: true, message: `User ${email} created with password admin123` });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // Google OAuth Routes
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
