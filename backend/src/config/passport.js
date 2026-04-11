@@ -15,13 +15,22 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
+// Get the backend URL for OAuth callbacks
+const getBackendUrl = () => {
+    if (process.env.NODE_ENV === 'production') {
+        return 'https://ads-agency-portal.onrender.com';
+    }
+    return 'http://localhost:5000';
+};
+
 passport.use(
     new GoogleStrategy(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: '/auth/google/callback',
+            callbackURL: `${getBackendUrl()}/auth/google/callback`,
             proxy: true,
+            passReqToCallback: true,
         },
         async (accessToken, refreshToken, profile, done) => {
             const { id, displayName, emails, photos } = profile;
