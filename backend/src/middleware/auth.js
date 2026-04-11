@@ -30,7 +30,7 @@ exports.protect = async (req, res, next) => {
         req.user = await User.findById(decoded.id).select('-password');
 
         if (!req.user) {
-            console.log(`AUTH_DEBUG: User not found for id ${decoded.id}`);
+            console.error(`AUTH_ERROR: User not found for id ${decoded.id}`);
             return res.status(401).json({ success: false, message: 'User not found' });
         }
 
@@ -38,9 +38,13 @@ exports.protect = async (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Your account has been blocked. Contact support.' });
         }
 
+        // Update last login
+        req.user.lastLogin = Date.now();
+        await req.user.save({ validateBeforeSave: false });
+
         next();
     } catch (err) {
-        console.log(`AUTH_DEBUG: Token verification failed: ${err.message}`);
+        console.error(`AUTH_ERROR: Token verification failed: ${err.message}`);
         return res.status(401).json({ success: false, message: 'Not authorized, token failed' });
     }
 };

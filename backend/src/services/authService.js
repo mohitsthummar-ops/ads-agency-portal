@@ -75,26 +75,32 @@ const registerUser = async (userData, res) => {
  */
 const loginUser = async ({ email, password }, res) => {
     const normalizedEmail = email.toLowerCase().trim();
+    console.log(`LOGIN_ATTEMPT: Email=${normalizedEmail}`);
+
     const user = await User.findOne({ email: normalizedEmail }).select('+password');
 
     if (!user) {
+        console.log(`LOGIN_FAILED: User not found for email=${normalizedEmail}`);
         logActivity(email, 'failed login attempt (not found)', 'failure');
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
+        console.log(`LOGIN_FAILED: Wrong password for email=${normalizedEmail}`);
         logActivity(email, 'failed login attempt (wrong password)', 'failure');
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
     if (user.isBlocked) {
+        console.log(`LOGIN_FAILED: User account is blocked for email=${normalizedEmail}`);
         return res.status(403).json({
             success: false,
             message: 'Your account has been blocked. Contact support.',
         });
     }
 
+    console.log(`LOGIN_SUCCESS: User=${user.email}, Role=${user.role}`);
     logActivity(user.email, 'logged in successfully');
 
     // Self-healing: If email is in ADMIN_EMAILS list, ensure role is 'admin'

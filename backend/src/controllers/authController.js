@@ -28,7 +28,12 @@ exports.login = asyncHandler(async (req, res) => {
 
 // ─── @route   GET /api/auth/me ────────────────────────────────────────────────
 exports.getMe = asyncHandler(async (req, res) => {
-    sendSuccess(res, 200, 'User profile fetched', { user: req.user });
+    // Generate a new token for the user (in case the old one is expiring)
+    const token = req.user.getSignedJwtToken();
+    sendSuccess(res, 200, 'User profile fetched', {
+        user: req.user,
+        token: token
+    });
 });
 
 // ─── @route   POST /api/auth/logout ───────────────────────────────────────────

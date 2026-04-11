@@ -103,7 +103,9 @@ function App() {
       try {
         const res = await api.get('/auth/me');
         if (res.data.success) {
-          setAuth(res.data.user, res.data.token || useAuthStore.getState().token);
+          // Update token if server returned a new one (token refresh)
+          const newToken = res.data.token || useAuthStore.getState().token;
+          setAuth(res.data.user, newToken);
         } else if (isAuthenticated) {
           // Explicit failure from server, clear stale session
           useAuthStore.getState().logout();
