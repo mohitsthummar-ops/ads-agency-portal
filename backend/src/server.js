@@ -45,15 +45,19 @@ app.use(
 );
 
 // CORS
-const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000')
-    .split(',')
-    .map(o => o.trim());
+const allowedOrigins = [
+    ...(process.env.CLIENT_URL || 'https://ads-agency-portal.vercel.app').split(',').map(o => o.trim()),
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173'
+];
 
 app.use(
     cors({
         origin: (origin, callback) => {
             // Allow requests with no origin (e.g. Postman, curl) and whitelisted origins
-            if (!origin || allowedOrigins.includes(origin)) {
+            if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
                 callback(null, true);
             } else {
                 callback(new Error(`CORS blocked: ${origin}`));
@@ -126,7 +130,7 @@ app.use('/uploads', express.static(uploadDir));
 const getClientUrl = () => {
     if (process.env.CLIENT_URL) return process.env.CLIENT_URL.split(',')[0];
     if (process.env.FRONTEND_URL) return process.env.FRONTEND_URL.split(',')[0];
-    return process.env.NODE_ENV === 'production' ? 'https://ads-agency-portal.vercel.app' : 'http://localhost:3000';
+    return 'https://ads-agency-portal.vercel.app'; // Production fallback
 };
 
 // Root Auth Routes

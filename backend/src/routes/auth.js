@@ -32,8 +32,10 @@ router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
+        // Robust fallback for frontend URL (prefer production)
+        const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://ads-agency-portal.vercel.app';
         // Successful authentication, redirect to frontend dashboard
-        res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+        res.redirect(`${frontendUrl.replace(/\/$/, '')}/dashboard`);
     }
 );
 

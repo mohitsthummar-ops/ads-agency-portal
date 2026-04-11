@@ -37,8 +37,10 @@ const sendToken = (user, statusCode, res) => {
 /**
  * Register a new user.
  */
-const registerUser = async ({ name, email: rawEmail, password }, res) => {
-    const email = rawEmail.toLowerCase().trim();
+const registerUser = async (userData, res) => {
+    const { name, password } = userData;
+    const email = userData.email.toLowerCase().trim();
+
     const existing = await User.findOne({ email });
     if (existing) {
         return res.status(400).json({ success: false, message: 'Email already in use' });
@@ -48,7 +50,14 @@ const registerUser = async ({ name, email: rawEmail, password }, res) => {
     // Only pre-approved emails can be admins
     const role = ADMIN_EMAILS.includes(email) ? 'admin' : 'client';
 
-    const user = await User.create({ name, email, password, role });
+    // Spread userData to capture phone, companyName, etc. then override sensitive/calculated fields
+    const user = await User.create({
+        ...userData,
+        email,
+        password,
+        role,
+        loginProvider: 'local'
+    });
 
     // Send welcome email (fire and forget, or await and catch)
     try {
@@ -101,8 +110,8 @@ const loginUser = async ({ email, password }, res) => {
  * Initiate password reset: generate token, save to DB, send email.
  */
 const forgotPassword = async (email, clientUrl, res) => {
-    // Ensure we have a clientUrl, fallback to env or default
-    const url = clientUrl || process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:3000';
+    // Ensure we have a clientUrl, fallback to env or production default
+    const url = clientUrl || process.env.CLIENT_URL || process.env.FRONTEND_URL || 'https://ads-agency-portal.vercel.app';
 
     const user = await User.findOne({ email });
     if (!user) {
